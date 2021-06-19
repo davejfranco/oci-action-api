@@ -1,0 +1,30 @@
+name: OCI Acttion API CI/CD
+on: [push]
+jobs:
+  docker:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Login to OCIR
+          uses: docker/login-action@v1
+          with:
+            registry: iad.ocir.io
+            username: ${{ secrets.OCI_USERNAME }}
+            password: ${{ secrets.OCI_TOKEN }}
+
+        - name: Check out repository code
+          uses: actions/checkout@v2
+        
+        - name: Build and Push OCI API
+          id: docker_build_api
+          uses: docker/build-push-action@v2
+          with:
+            tags: ${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }}:${{ github.sha }}
+            push: true
+
+        - name: Build and Push OCI Worker
+          id: docker_build_worker
+          uses: docker/build-push-action@v2
+          with:
+            file: worker/Dockerfile
+            tags: ${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }}-worker:${{ github.sha }}
+            push: true
