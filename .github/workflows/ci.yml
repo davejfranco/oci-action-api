@@ -14,17 +14,16 @@ jobs:
         - name: Check out repository code
           uses: actions/checkout@v2
         
+        - name: Docker image and tag
+          run: |
+            echo API_IMAGE="${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }}" >> $GITHUB_ENV
+            echo WORKER_IMAGE="${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }}-worker" >> $GITHUB_ENV
+            echo TAG="${GITHUB_REF##*/}-${{ github.sha }}" >> $GITHUB_ENV
+    
         - name: Build and Push OCI API
           id: docker_build_api
-          uses: docker/build-push-action@v2
-          with:
-            tags: ${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }}:${{ github.sha }}
-            push: true
-
-        - name: Build and Push OCI Worker
+          run: docker build -t "${API_IMAGE}:${TAG}" . && docker push "${API_IMAGE}:${TAG}"
+        
+        - name: Build and Push OCI WORKER
           id: docker_build_worker
-          uses: docker/build-push-action@v2
-          with:
-            file: worker/Dockerfile
-            tags: ${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }}-worker:${{ github.sha }}
-            push: true
+          run: docker build -t "${WORKER_IMAGE}:${TAG}" -f worker/Dockerfile . && docker push "${WORKER_IMAGE}:${TAG}"
