@@ -21,7 +21,7 @@ jobs:
           id: docker_build_api
           uses: docker/build-push-action@v2
           with:
-            tags: ${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }}:${GITHUB_REF##*/}_${{ github.sha }}
+            tags: ${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }}:${GITHUB_REF##*/}.${{ github.sha }}
             push: true
 
         - name: Build and Push OCI Worker
@@ -29,5 +29,5 @@ jobs:
           uses: docker/build-push-action@v2
           with:
             file: worker/Dockerfile
-            tags: ${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }}-worker:${GITHUB_REF##*/}_${{ github.sha }}
+            tags: ${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }}-worker:${GITHUB_REF##*/}.${{ github.sha }}
             push: true
