@@ -14,14 +14,17 @@ jobs:
         - name: Check out repository code
           uses: actions/checkout@v2
         
-        - name: Branch name
-          run: echo running on branch ${GITHUB_REF##*/}
-        
+        - name: Docker image and tag
+          run: |
+            API_IMAGE=${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }} >> $GITHUB_ENV
+            WORKER_IMAGE:${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }}-worker >> $GITHUB_ENV
+            TAG=${GITHUB_REF##*/} >> $GITHUB_ENV
+    
         - name: Build and Push OCI API
           id: docker_build_api
           uses: docker/build-push-action@v2
           with:
-            tags: ${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }}:${GITHUB_REF##*/}.${{ github.sha }}
+            tags: "$API_IMAGE:$TAG"
             push: true
 
         - name: Build and Push OCI Worker
@@ -29,5 +32,5 @@ jobs:
           uses: docker/build-push-action@v2
           with:
             file: worker/Dockerfile
-            tags: ${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }}-worker:${GITHUB_REF##*/}.${{ github.sha }}
+            tags: "$WORKER_IMAGE:$TAG"
             push: true
