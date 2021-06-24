@@ -23,15 +23,7 @@ jobs:
         - name: Build and Push OCI API
           id: docker_build_api
           run: docker build -t "${API_IMAGE}:${TAG}" . && docker push "${API_IMAGE}:${TAG}"
-          # uses: docker/build-push-action@v2
-          # with:
-          #   tags: "$API_IMAGE:$TAG"
-          #   push: true
-
-        # - name: Build and Push OCI Worker
-        #   id: docker_build_worker
-          # uses: docker/build-push-action@v2
-          # with:
-          #   file: worker/Dockerfile
-          #   tags: "$WORKER_IMAGE:$TAG"
-          #   push: true
+        
+        - name: Build and Push OCI WORKER
+          id: docker_build_worker
+          run: docker build -t "${WORKER_IMAGE}:${TAG}" -f worker/Dockerfile . && docker push "${WORKER_IMAGE}:${TAG}"
