@@ -22,7 +22,7 @@ jobs:
     
         - name: Build and Push OCI API
           id: docker_build_api
-          run: docker build -t "${API_IMAGE}:${TAG}" . 
+          run: docker build -t "${API_IMAGE}:${TAG}" . && docker push "${API_IMAGE}:${TAG}"
           # uses: docker/build-push-action@v2
           # with:
           #   tags: "$API_IMAGE:$TAG"
