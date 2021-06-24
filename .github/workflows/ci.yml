@@ -18,7 +18,7 @@ jobs:
           run: |
             echo API_IMAGE="${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }}" >> $GITHUB_ENV
             echo WORKER_IMAGE="${{ secrets.OCI_REGION_CODE }}.ocir.io/${{ secrets.OCI_TENANT }}/${{ github.repository }}-worker" >> $GITHUB_ENV
-            echo TAG="${GITHUB_REF##*/}" >> $GITHUB_ENV
+            echo TAG="${GITHUB_REF##*/}-${{ github.sha }}" >> $GITHUB_ENV
     
         - name: Build and Push OCI API
           id: docker_build_api
